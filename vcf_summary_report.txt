@@ -1,0 +1,9 @@
+=== VCF Analysis Summary Report ===
+The Highest Quality is: 67.0
+The Lowest Quality is: 3.0
+The Average Quality is: 28.2
+
+=== Chromosome Counts ===
+Chromosome 19: 2 variants
+Chromosome 20: 6 variants
+Chromosome X: 1 variants
