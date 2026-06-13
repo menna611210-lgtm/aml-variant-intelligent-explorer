@@ -1,15 +1,16 @@
-# Variant Explorer
+# AML Variant Analysis Pipeline
 
-A beginner bioinformatics project for parsing and visualizing VCF files.
+## Description
+A Python-based pipeline for parsing and analyzing genomic variants from VCF files.
 
-## Goal
+## Current Features
+- VCF Parsing
+- Chromosome Analysis
+- Quality Analysis
+- Mutation Classification
+- Report Generation
 
-Build a simple tool that:
-- Reads VCF files
-- Extracts variants
-- Displays basic statistics
-- Visualizes genomic data
-
-## Status
-
-Week 3 - Initial Development
+## Future Plans
+- Variant Annotation
+- AML Gene Mapping
+- Network Biology Analysis
