@@ -1,9 +1,10 @@
 import pandas as pd
 
-
+#parse vcf file and extract variant information
 def parse_vcf(file_path):
     parsed_data = []
 
+#Open the file and start analyzing
     with open(file_path, "r") as file:
         for line in file:
             line = line.strip()
@@ -33,6 +34,7 @@ def parse_vcf(file_path):
     return parsed_data
 
 
+#counts variants per chromosome
 def analyze_chromosomes(variants_list):
     chromosome_counts = {}
     for v in variants_list:
@@ -40,7 +42,7 @@ def analyze_chromosomes(variants_list):
         chromosome_counts[chrom] = chromosome_counts.get(chrom, 0) + 1
     return chromosome_counts
 
-
+#determines the value of the quality and counts it
 def analyze_quality(variants_list):
     qual_values = []
     missing = 0
@@ -58,6 +60,7 @@ def analyze_quality(variants_list):
     return qual_values, missing
 
 
+#determines the result of passing on filters
 def analyze_filters(variants_list):
     filter_counts = {}
     for v in variants_list:
@@ -66,8 +69,9 @@ def analyze_filters(variants_list):
     return filter_counts
 
 
+#the type of the mutations
 def analyze_mutations(variants_list):
-    mutation_counts = {"Transition": 0, "Transversion": 0, "Other": 0}
+    mutation_counts = {"Transition": 0, "Transversion": 0, "Insertion": 0, "Deletion": 0, "Other": 0}
 
     transitions = {("A", "G"), ("G", "A"), ("C", "T"), ("T", "C")}
 
@@ -80,12 +84,16 @@ def analyze_mutations(variants_list):
                 mutation_counts["Transition"] += 1
             else:
                 mutation_counts["Transversion"] += 1
+        elif len(ref) > 1 and len(alt) == 1:
+            mutation_counts["Deletion"] +=1
+        elif len(ref)== 1 and len (alt) > 1:
+            mutation_counts["Insertion"] += 1 
         else:
             mutation_counts["Other"] += 1
 
     return mutation_counts
 
-
+#the output of the parsing
 def main(file_path):
 
     variants_list = parse_vcf(file_path)
@@ -98,6 +106,7 @@ def main(file_path):
     qual_values, missing = analyze_quality(variants_list)
     filters = analyze_filters(variants_list)
     mutations = analyze_mutations(variants_list)
+    total_variants = len(variants_list)
 
     print("\nChromosomes:", chrom)
     print("Mutations:", mutations)
@@ -109,12 +118,29 @@ def main(file_path):
 
     print("Missing QUAL:", missing)
     print("Filters:", filters)
-
+#the external report
     with open("vcf_summary_report.txt", "w") as report:
-        report.write("VCF Report\n\n")
-        report.write(f"Chromosomes: {chrom}\n")
-        report.write(f"Mutations: {mutations}\n")
 
+        report.write("VCF Analysis Report\n\n")
+
+        report.write(f"Total variants : {total_variants}\n")
+        report.write(f"\nChromosomes distribution :\n")
+        for key , value in chrom.items():
+            report.write(f"chr{key}: {value}\n")
+        report.write("\n")
+
+        report.write(f"\nMutations type : \n")
+        for key , value in mutations.items():
+            report.write(f"{key}: {value}\n")
+        report.write("\n")
+
+        report.write(f"\nQuality Matrics :\n")
+        if qual_values :
+            report.write(f"\nMax Qual : {max(qual_values)}\n")
+            report.write(f"\nMin Qual : {min(qual_values)}\n")
+            report.write(f"\nAVG Qual : {sum(qual_values) / len(qual_values)}")
+        else:
+            report.write("\nNo Quality data available\n")
 
 if __name__ == "__main__":
     main("sample_vcf_file.vcf")
