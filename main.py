@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 #parse vcf file and extract variant information
 def parse_vcf(file_path):
@@ -14,7 +15,6 @@ def parse_vcf(file_path):
 
             columns = line.split()
 
-            # حماية من نقص الأعمدة
             if len(columns) < 8:
                 continue
 
@@ -87,7 +87,7 @@ def analyze_mutations(variants_list):
         elif len(ref) > 1 and len(alt) == 1:
             mutation_counts["Deletion"] +=1
         elif len(ref)== 1 and len (alt) > 1:
-            mutation_counts["Insertion"] += 1 
+            mutation_counts["Insertion"] += 1
         else:
             mutation_counts["Other"] += 1
 
@@ -127,6 +127,10 @@ def main(file_path):
         report.write(f"\nChromosomes distribution :\n")
         for key , value in chrom.items():
             report.write(f"chr{key}: {value}\n")
+            x = [{key}]
+            y = [value]
+            plt.bar({key} , value , colour = 'skyblue' , edgecolor = 'black')
+            plt.show()
         report.write("\n")
 
         report.write(f"\nMutations type : \n")
@@ -144,3 +148,4 @@ def main(file_path):
 
 if __name__ == "__main__":
     main("sample_vcf_file.vcf")
+

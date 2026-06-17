@@ -4,22 +4,3 @@ Total variants : 9
 
 Chromosomes distribution :
 chr19: 2
-chr20: 6
-chrX: 1
-
-
-Mutations type : 
-Transition: 2
-Transversion: 4
-Insertion: 2
-Deletion: 0
-Other: 1
-
-
-Quality Matrics :
-
-Max Qual : 67.0
-
-Min Qual : 3.0
-
-AVG Qual : 28.2
