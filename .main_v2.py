@@ -1,12 +1,39 @@
+import streamlit as st 
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
 print("AVIE v1.0 \n AML Variant Intelligent Explorer")
 
-# ******************
+# __________________________
 # File Analysis
-# ******************
+# __________________________
+def parse_vcf(file_path):
+    parsed_data = []
+    with open(file_path, "r") as file:
+        for line in file:
+            line = line.strip()
+            if line.startswith("##"):
+                continue
+            if line.startswith("#CHROM"):
+                continue
+            columns = line.split("\t")
+            if len(columns) < 10:
+                continue
+            parsed_data.append({
+                "CHROM": columns[0],
+                "POS": int(columns[1]),
+                "ID": columns[2],
+                "REF": columns[3],
+                "ALT": columns[4],
+                "QUAL": columns[5],
+                "FILTER": columns[6],
+                "INFO": columns[7],
+                "FORMAT": columns[8],
+                "SAMPLES": columns[9]
+            })
+    return parsed_data
+
 while True:
     file_path = input("\nEnter VCF File Path : ")
 
@@ -15,84 +42,61 @@ while True:
         continue
 
     if not os.path.exists(file_path):
-        print("The File Does Not Exist")
+        print("File not found")
         continue
 
-    elif file_path.endswith(".vcf"):
-        file_name = file_path.replace(".vcf" , "")
-        print("Parsing VCF File ....")
-        def parse_vcf(file_path):
-            parsed_data = []
-            with open(file_path, "r") as file :
-                for line in file:
-                    line = line.strip()
-                    if line.startswith("##"):
-                      continue
-                    if line.startswith("#CHROM"):
-                      continue
-                    columns = line.split("\t")
-                    if len(columns) < 8 :
-                        continue
-                    parsed_data.append({
-                       "CHROM" : columns[0],
-                        "POS" : int(columns[1]),
-                        "ID" : columns[2],
-                        "REF" : columns[3],
-                        "ALT" : columns[4],
-                        "QUAL" : columns[5],
-                        "FILTER" : columns[6],
-                        "INFO" : columns[7],
-                        "FORMAT" : columns[8],
-                        "SAMPLES" : columns[9]
-                    })
-            return parsed_data
+    break
 
-# *************************
+file_name = file_path.replace(".vcf", "")
+
+# __________________________
 # 2. CHROMOSOME ANALYSIS
-# *************************
-print("Analyzing Chromosomes .....")
+# __________________________
+
 def analyze_chromosomes(variants):
     counts = {}
-    for v in variants:
-        chrom = v["CHROM"]
+    for variant in variants:
+        chrom = variant["CHROM"]
         counts[chrom] = counts.get(chrom, 0) + 1
     return counts
 
 
-# *************************
+# __________________________
 # 3. QUALITY ANALYSIS
-# *************************
-print("Analyzing Quality SCore ....")
+# __________________________
+
+
 def analyze_quality(variants):
     values = []
     missing = 0
 
-    for v in variants:
-        q = v["QUAL"]
+    for variant in variants:
+        quality = variant["QUAL"]
         try:
-            values.append(float(q))
+            values.append(float(quality))
         except:
             missing += 1
 
     return values, missing
 
 
-# *************************
+# __________________________
 # 4. FILTER ANALYSIS
-# *************************
-print("Analyzing Mutation Types ....")
+# __________________________
+
+
 def analyze_filters(variants):
     counts = {}
-    for v in variants:
-        f = v["FILTER"]
-        counts[f] = counts.get(f, 0) + 1
+    for variant in variants:
+        filter = variant["FILTER"]
+        counts[filter] = counts.get(filter, 0) + 1
     return counts
 
 
-# **************************
+# __________________________
 # 5. MUTATION CLASSIFICATION
-# **************************
-print("Analyzing Mutation Types ....")
+# __________________________
+
 def analyze_mutations(variants):
     result = {
         "Transition": 0,
@@ -104,9 +108,9 @@ def analyze_mutations(variants):
 
     transitions = {("A", "G"), ("G", "A"), ("C", "T"), ("T", "C")}
 
-    for v in variants:
-        ref = v["REF"]
-        alt = v["ALT"].split(",")[0]  # handle multi-allelic safely
+    for variant in variants:
+        ref = variant["REF"]
+        alt = variant["ALT"].split(",")[0]  # handle multi-allelic safely
 
         if len(ref) == 1 and len(alt) == 1:
             if (ref, alt) in transitions:
@@ -126,10 +130,11 @@ def analyze_mutations(variants):
     return result
 
 
-# *************************
-# 6. PLOTTING
-# *************************
-print("Generating Plots ....")
+# _________________________
+# 6. plotting
+# _________________________
+
+os.makedirs("results", exist_ok=True)
 def plot_chromosome_distribution(counts):
     plt.figure(figsize=(5, 2))
     plt.barh(counts.keys(), counts.values(), color="skyblue", edgecolor="black")
@@ -137,7 +142,7 @@ def plot_chromosome_distribution(counts):
     plt.xlabel("Count")
     plt.ylabel("Chromosome")
     plt.tight_layout()
-    plt.savefig("results/chromosome_distribution.png" , dpi=300)
+    plt.savefig("results/chromosome_distribution.png", dpi=300)
     plt.show()
 
 
@@ -174,23 +179,23 @@ def plot_mutation_distribution(mutations):
     plt.show()
 
 
-# *************************
+# __________________________
 # 7. REPORT GENERATION
-# *************************
-print("Generating Report ....")
-def write_report(path, total, chrom, mutations, qual, missing, filters):
-    with open(path, "w") as report:
-        report.write("results/" + file_name + "REPORT\n\n")
+# __________________________
+
+def write_report(file_path, total, chrom, mutations, qual, missing, filters):
+    with open(file_path, "w") as report:
+        report.write("AVIE Analysis Report\n\n")
 
         report.write(f"Total variants: {total}\n\n")
 
         report.write("Chromosome distribution:\n")
-        for k, v in chrom.items():
-            report.write(f"{k}: {v}\n")
+        for key, value in chrom.items():
+            report.write(f"{key}: {value}\n")
 
         report.write("\nMutation types:\n")
-        for k, v in mutations.items():
-            report.write(f"{k}: {v}\n")
+        for key, value in mutations.items():
+            report.write(f"{key}: {value}\n")
 
         report.write("\nQuality metrics:\n")
         if qual:
@@ -203,27 +208,36 @@ def write_report(path, total, chrom, mutations, qual, missing, filters):
         report.write(f"\nMissing QUAL: {missing}\n")
 
         report.write("\nFilters:\n")
-        for k, v in filters.items():
-            report.write(f"{k}: {v}\n")
+        for key, value in filters.items():
+            report.write(f"{key}: {value}\n")
 
 
-# *************************
+# __________________________
 # 8. MAIN PIPELINE
-# *************************
-print("Analysis Completed Successfully :)")
+# __________________________
+
 def main(file_path):
     variants = parse_vcf(file_path)
 
     df = pd.DataFrame(variants)
     print("\nPreview:")
     print(df.head())
-
+    print("Analyzing Chromosomes .....")
     chrom = analyze_chromosomes(variants)
+    print("Analyzing Quality SCore ....")
     qual, missing = analyze_quality(variants)
+    print("Analyzing Mutation Types ....")
     filters = analyze_filters(variants)
+    print("Analyzing Mutation Types ....")
     mutations = analyze_mutations(variants)
+    print("Generating Report ....")
+    print("Analysis Completed Successfully :)")
 
-    os.makedirs("results" , exist_ok = True)
+    plot_chromosome_distribution(chrom)
+    plot_quality_distribution(qual)
+    plot_filter_distribution(filters)
+    plot_mutation_distribution(mutations)
+
     total = len(variants)
 
     print("\nChromosomes:", chrom)
@@ -237,8 +251,6 @@ def main(file_path):
     print("Missing QUAL:", missing)
     print("Filters:", filters)
 
-    plot_chromosome_distribution(chrom)
-
     write_report(
         "results/" + file_name + "report.txt",
         total,
@@ -251,4 +263,4 @@ def main(file_path):
 
 
 if __name__ == "__main__":
-    main("sample_vcf_file.vcf")
+   main(file_path)
