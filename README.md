@@ -11,6 +11,6 @@ a readable analysis that can be understood by students or researchers .
 - PDF File Transformation
 
 ## Future Plans
-_ Complete Genomic Pipeline including variant annotation.
-_ AML Gene Mapping .
-_ Network Biology Analysis . 
+- Complete Genomic Pipeline including variant annotation.
+- AML Gene Mapping .
+- Network Biology Analysis . 
