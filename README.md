@@ -1,14 +1,14 @@
-# AML Variant Analysis Pipeline
+# VCF Analysis Tool
 
 ## Description
 A Python-based pipeline for parsing and analyzing genomic variants from VCF files to exact 
-genes that are associated with AML (Acute Myeloid Leukemia).
+a readable analysis that can be understood by students or researchers .
 
 ## Current Features
-_ Variant call format (VCF) parsing.
-_ Mutation analysis
-_ Simple Visualization
-_ Report Generation 
+- Variant call format (VCF)file parsing.
+- Mutations Distributions
+- Simple Visualization
+- PDF File Transformation
 
 ## Future Plans
 _ Complete Genomic Pipeline including variant annotation.

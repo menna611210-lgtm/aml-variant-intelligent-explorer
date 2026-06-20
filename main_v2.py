@@ -2,52 +2,92 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+from fpdf import FPDF
 
-st.title("AVIE v1.0 \n🧬 AML Variant Intelligent Explorer\n")
-st.write("Welcome to the VCF analysis tool")
-uploaded_file = st.file_uploader("Upload your VCF file here :", type=["VCF", "txt"])
+# ___________________________
+# Generating PDF File Report
+# ___________________________
 
-if uploaded_file is not None:
-    st.success("VCF File Uploaded Successfully ")
-    st.write("File Name : ", uploaded_file.name)
-st.subheader(" VCF Preview ")
+def generate_pdf(dataframe, chrom, qual, mutations, filters):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial","B" , size=16)
+    pdf.cell(0, 10, "AVIE Analysis Report" , ln=True , align="C")
+    pdf.ln(5)
+    pdf.set_font("Arial" , "B" , 14)
+    pdf.cell(0, 10, "1. Chromosome Variant Distribution:", ln=True)
+    pdf.ln()
+    for key, value in chrom.items():
+        pdf.cell(0, 8, f" {key}: {value}", ln=True)
+        pdf.ln()
+    pdf.image(
+      "results/chromosome_distribution.png", x=15 , w=150)
 
+
+    pdf.add_page()
+    pdf.set_font("Arial", "B", size=16)
+    pdf.cell(0, 10, "Quality Score Metrics:" , ln=True)
+    pdf.ln()
+    if qual :
+      pdf.cell(0, 10, f"-Max Quality: {max(qual)}" , ln=True)
+      pdf.cell(0, 10, f"-Min Quality: {min(qual)}" , ln=True)
+      pdf.cell(0, 10, f"-Average Quality: {sum(qual) / len(qual)}" , ln=True)
+      pdf.ln()
+      pdf.image(
+          "results/quality_distribution.png", x=15 , w=150)
+    else :
+      pdf.cell(0, 10, "No Quality Data Available" , ln=True)
+
+    pdf.add_page()
+    pdf.set_font("Arial", "B", size=16)
+    pdf.cell(0, 10, "Mutations Type:" , ln=True)
+    pdf.ln()
+    for key, value in mutations.items():
+       pdf.cell(0, 10, f"{key}: {value}\n" , ln=True)
+    pdf.ln()
+    pdf.image(
+      "results/mutation_distribution.png", x=15 , w=150)
+
+    pdf.add_page()
+    pdf.set_font("Arial", "B", size=16)
+    pdf.cell(0, 10, "Filter Quality:" , ln=True)
+    pdf.ln()
+    for key, value in filters.items():
+       pdf.cell(0, 10, f"{key}: {value}\n" , ln=True)
+    pdf.ln()
+    pdf.image(
+       "results/filter_distribution.png", x=15 , w=150 )
+    return bytes(pdf.output(dest = "S"))
 
 # __________________________
 # File Analysis
 # __________________________
 def parse_vcf(uploaded_file):
     parsed_data = []
-    for line in uploaded_file :
+    for line in uploaded_file:
         line = line.decode("utf-8").strip()
         if line.startswith("##"):
-          continue
+            continue
         if line.startswith("#CHROM"):
-          continue
+            continue
         columns = line.split("\t")
         if len(columns) < 10:
-          continue
+            continue
         parsed_data.append(
-         {"CHROM": columns[0],
-         "POS": int(columns[1]),
-         "ID": columns[2],
-         "REF": columns[3],
-         "ALT": columns[4],
-         "QUAL": columns[5],
-         "FILTER": columns[6],
-         "INFO": columns[7],
-         "FORMAT": columns[8],
-         "SAMPLES": columns[9]})
+            {"CHROM": columns[0],
+             "POS": int(columns[1]),
+             "ID": columns[2],
+             "REF": columns[3],
+             "ALT": columns[4],
+             "QUAL": columns[5],
+             "FILTER": columns[6],
+             "INFO": columns[7],
+             "FORMAT": columns[8],
+             "SAMPLES": columns[9]})
     return parsed_data
 
 
-if uploaded_file is not None:
-    st.success("VCF File Uploaded Successfully ")
-    st.write("File Name : ", uploaded_file.name)
-    variants = parse_vcf(uploaded_file)
-    df = pd.DataFrame(variants)
-    st.write(df)
-    st.subheader(" VCF Preview ")
+
 
 # __________________________
 # 2. CHROMOSOME ANALYSIS
@@ -214,55 +254,39 @@ def write_report(file_path, total, chrom, mutations, qual, missing, filters):
             report.write(f"{key}: {value}\n")
 
 
-# __________________________
-# 8. MAIN PIPELINE
-# __________________________
 
-def main(file_path):
-    variants = parse_vcf(file_path)
+st.title("AVIE v1.0 \n🧬 AML Variant Intelligent Explorer\n")
+st.write("Welcome to the VCF analysis tool")
+uploaded_file = st.file_uploader("Upload your VCF file here :", type=["VCF", "txt"])
 
+if uploaded_file is not None:
+    st.success("VCF File Uploaded Successfully !")
+    st.write("File Name : ", uploaded_file.name)
+    variants = parse_vcf(uploaded_file)
     df = pd.DataFrame(variants)
-    print("\nPreview:")
-    print(df.head())
-    print("Analyzing Chromosomes .....")
+    st.write("VCF Preview Data")
+    st.dataframe(df)
+
     chrom = analyze_chromosomes(variants)
-    print("Analyzing Quality SCore ....")
-    qual, missing = analyze_quality(variants)
-    print("Analyzing Mutation Types ....")
+    qual , missing = analyze_quality(variants)
     filters = analyze_filters(variants)
-    print("Analyzing Mutation Types ....")
     mutations = analyze_mutations(variants)
-    print("Generating Report ....")
-    print("Analysis Completed Successfully :)")
+
 
     plot_chromosome_distribution(chrom)
     plot_quality_distribution(qual)
-    plot_filter_distribution(filters)
     plot_mutation_distribution(mutations)
+    plot_filter_distribution(filters)
 
-    total = len(variants)
-
-    print("\nChromosomes:", chrom)
-    print("Mutations:", mutations)
-
+    pdf_data = generate_pdf(df, chrom, qual, mutations, filters)
+    st.write("### Visual Dashboard ###")
+    st.image("results/chromosome_distribution.png")
     if qual:
-        print("Max QUAL:", max(qual))
-        print("Min QUAL:", min(qual))
-        print("Avg QUAL:", sum(qual) / len(qual))
+        st.image("results/quality_distribution.png")
 
-    print("Missing QUAL:", missing)
-    print("Filters:", filters)
-
-    write_report(
-        "results/" + uploaded_file.name + "report.txt",
-        total,
-        chrom,
-        mutations,
-        qual,
-        missing,
-        filters
+    st.download_button(
+        label="📥 Download Full Analysis Report (PDF)",
+        data=pdf_data,
+        file_name="AVIE_Analysis_Report.pdf",
+        mime="application/pdf"
     )
-
-
-if __name__ == "__main__":
-    main(uploaded_file)
