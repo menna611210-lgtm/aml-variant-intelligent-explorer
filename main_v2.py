@@ -1,53 +1,53 @@
-import streamlit as st 
+import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-print("AVIE v1.0 \n AML Variant Intelligent Explorer")
+st.title("AVIE v1.0 \n🧬 AML Variant Intelligent Explorer\n")
+st.write("Welcome to the VCF analysis tool")
+uploaded_file = st.file_uploader("Upload your VCF file here :", type=["VCF", "txt"])
+
+if uploaded_file is not None:
+    st.success("VCF File Uploaded Successfully ")
+    st.write("File Name : ", uploaded_file.name)
+st.subheader(" VCF Preview ")
+
 
 # __________________________
 # File Analysis
 # __________________________
-def parse_vcf(file_path):
+def parse_vcf(uploaded_file):
     parsed_data = []
-    with open(file_path, "r") as file:
-        for line in file:
-            line = line.strip()
-            if line.startswith("##"):
-                continue
-            if line.startswith("#CHROM"):
-                continue
-            columns = line.split("\t")
-            if len(columns) < 10:
-                continue
-            parsed_data.append({
-                "CHROM": columns[0],
-                "POS": int(columns[1]),
-                "ID": columns[2],
-                "REF": columns[3],
-                "ALT": columns[4],
-                "QUAL": columns[5],
-                "FILTER": columns[6],
-                "INFO": columns[7],
-                "FORMAT": columns[8],
-                "SAMPLES": columns[9]
-            })
+    for line in uploaded_file :
+        line = line.decode("utf-8").strip()
+        if line.startswith("##"):
+          continue
+        if line.startswith("#CHROM"):
+          continue
+        columns = line.split("\t")
+        if len(columns) < 10:
+          continue
+        parsed_data.append(
+         {"CHROM": columns[0],
+         "POS": int(columns[1]),
+         "ID": columns[2],
+         "REF": columns[3],
+         "ALT": columns[4],
+         "QUAL": columns[5],
+         "FILTER": columns[6],
+         "INFO": columns[7],
+         "FORMAT": columns[8],
+         "SAMPLES": columns[9]})
     return parsed_data
 
-while True:
-    file_path = input("\nEnter VCF File Path : ")
 
-    if not file_path.endswith(".vcf"):
-        print("This is not a VCF file")
-        continue
-
-    if not os.path.exists(file_path):
-        print("File not found")
-        continue
-
-    break
-
-file_name = file_path.replace(".vcf", "")
+if uploaded_file is not None:
+    st.success("VCF File Uploaded Successfully ")
+    st.write("File Name : ", uploaded_file.name)
+    variants = parse_vcf(uploaded_file)
+    df = pd.DataFrame(variants)
+    st.write(df)
+    st.subheader(" VCF Preview ")
 
 # __________________________
 # 2. CHROMOSOME ANALYSIS
@@ -135,6 +135,8 @@ def analyze_mutations(variants):
 # _________________________
 
 os.makedirs("results", exist_ok=True)
+
+
 def plot_chromosome_distribution(counts):
     plt.figure(figsize=(5, 2))
     plt.barh(counts.keys(), counts.values(), color="skyblue", edgecolor="black")
@@ -252,7 +254,7 @@ def main(file_path):
     print("Filters:", filters)
 
     write_report(
-        "results/" + file_name + "report.txt",
+        "results/" + uploaded_file.name + "report.txt",
         total,
         chrom,
         mutations,
@@ -263,4 +265,4 @@ def main(file_path):
 
 
 if __name__ == "__main__":
-   main(file_path)
+    main(uploaded_file)
