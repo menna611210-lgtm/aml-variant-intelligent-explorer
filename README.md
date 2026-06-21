@@ -23,8 +23,6 @@ a readable analysis that can be understood by students or researchers .
 - AML Gene Mapping .
 - Network Biology Analysis . 
 
-<img width="800" height="615" alt="AVIE Video 2" src="https://github.com/user-attachments/assets/01b0dd9f-7e98-4471-9e2b-b1189dfb9168" />
-
 
 https://github.com/user-attachments/assets/83d936b5-3bb1-47a1-b808-2bc82ec98b27
 
