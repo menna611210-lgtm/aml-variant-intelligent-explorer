@@ -1,0 +1,27 @@
+AVIE Analysis Report
+
+Total variants: 9
+
+Chromosome distribution:
+19: 2
+20: 6
+X: 1
+
+Mutation types:
+Transition: 3
+Transversion: 4
+Insertion: 1
+Deletion: 1
+Other: 0
+
+Quality metrics:
+Max: 67.0
+Min: 3.0
+Avg: 28.2
+
+Missing QUAL: 1
+
+Filters:
+.: 3
+PASS: 5
+q10: 1

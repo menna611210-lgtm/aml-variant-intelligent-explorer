@@ -1,0 +1,19 @@
+AVIE Analysis Report
+
+Total variants: 0
+
+Chromosome distribution:
+
+Mutation types:
+Transition: 0
+Transversion: 0
+Insertion: 0
+Deletion: 0
+Other: 0
+
+Quality metrics:
+No quality data
+
+Missing QUAL: 0
+
+Filters:
