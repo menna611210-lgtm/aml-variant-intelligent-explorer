@@ -23,8 +23,4 @@ a readable analysis that can be understood by students or researchers .
 - AML Gene Mapping .
 - Network Biology Analysis . 
 
-
-<div align="center">
-  <img src="demo.gif" alt="Genova Demo" width="750">
-</div>
-![Genova Demo](demo.gif)
+<img width="800" height="615" alt="AVIE Video 2" src="https://github.com/user-attachments/assets/01b0dd9f-7e98-4471-9e2b-b1189dfb9168" />
