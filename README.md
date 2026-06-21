@@ -9,7 +9,7 @@ a readable analysis that can be understood by students or researchers .
 - The system parses your file
 - you will receive an analysis of your vcf with a simple visualization
 - you can download a pdf file that contains the analysis and the visualization 
-[AVIE Video.mp4](../../Downloads/AVIE%20Video.mp4)
+![AVIE Video 2.gif](../../Downloads/AVIE%20Video%202.gif)
 
 
 ## Current Features
