@@ -22,5 +22,3 @@ a readable analysis that can be understood by students or researchers .
 - Complete Genomic Pipeline including variant annotation.
 - AML Gene Mapping .
 - Network Biology Analysis . 
-- 
-[AVIE Video.mp4](../../Downloads/AVIE%20Video.mp4)
