@@ -1,8 +1,45 @@
 import streamlit as st
+import base64
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
 from fpdf import FPDF
+
+
+def get_base64_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+bg_base64 = get_base64_image("img.png")
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/jpg;base64,{bg_base64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color : white;
+    }}
+    h1, h2, h3, h4, h5, h6, p, .stMarkdown, [data-testid="stWidgetLabel"] p {{
+        color: #ffffff !important;
+    }}
+    [data-testid="stFileUploader"] section {{
+        background-color: rgba(255, 255, 255, 0.95) !important; 
+    }}
+    [data-testid="stFileUploader"] * {{
+        color:#111111 !important; 
+    }}
+    [data-testid="stFileUploader"] button {{
+        background-color: #f0f2f6 !important;
+        border: 1px solid #ccced2 !important;
+        color:#111111 !important;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 # ___________________________
 # Generating PDF File Report
@@ -221,39 +258,10 @@ def plot_mutation_distribution(mutations):
     plt.show()
 
 
-# __________________________
-# 7. REPORT GENERATION
-# __________________________
 
-def write_report(file_path, total, chrom, mutations, qual, missing, filters):
-    with open(file_path, "w") as report:
-        report.write("AVIE Analysis Report\n\n")
-
-        report.write(f"Total variants: {total}\n\n")
-
-        report.write("Chromosome distribution:\n")
-        for key, value in chrom.items():
-            report.write(f"{key}: {value}\n")
-
-        report.write("\nMutation types:\n")
-        for key, value in mutations.items():
-            report.write(f"{key}: {value}\n")
-
-        report.write("\nQuality metrics:\n")
-        if qual:
-            report.write(f"Max: {max(qual)}\n")
-            report.write(f"Min: {min(qual)}\n")
-            report.write(f"Avg: {sum(qual) / len(qual)}\n")
-        else:
-            report.write("No quality data\n")
-
-        report.write(f"\nMissing QUAL: {missing}\n")
-
-        report.write("\nFilters:\n")
-        for key, value in filters.items():
-            report.write(f"{key}: {value}\n")
-
-
+# ____________________
+# Streamlit Edition
+# ____________________
 
 st.title("AVIE v1.0 \n🧬 AML Variant Intelligent Explorer\n")
 st.write("Welcome to the VCF analysis tool")
@@ -290,3 +298,4 @@ if uploaded_file is not None:
         file_name="AVIE_Analysis_Report.pdf",
         mime="application/pdf"
     )
+    print("M")

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/variant_exeplorer.iml" filepath="$PROJECT_DIR$/.idea/variant_exeplorer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/AML-Variant-Intelligent-Explorer.iml" filepath="$PROJECT_DIR$/.idea/AML-Variant-Intelligent-Explorer.iml" />
     </modules>
   </component>
 </project>
