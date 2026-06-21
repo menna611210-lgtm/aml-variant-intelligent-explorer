@@ -27,3 +27,4 @@ a readable analysis that can be understood by students or researchers .
 <div align="center">
   <img src="demo.gif" alt="Genova Demo" width="750">
 </div>
+![Genova Demo](demo.gif)
