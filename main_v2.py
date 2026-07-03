@@ -40,7 +40,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 # ___________________________
 # Generating PDF File Report
 # ___________________________
@@ -298,5 +297,3 @@ if uploaded_file is not None:
         file_name="AVIE_Analysis_Report.pdf",
         mime="application/pdf"
     )
-    print("M")
-
