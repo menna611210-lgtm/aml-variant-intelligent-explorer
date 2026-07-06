@@ -262,8 +262,8 @@ def plot_mutation_distribution(mutations):
 # Streamlit Edition
 # ____________________
 
-st.title("AVIE v1.0 \n🧬 AML Variant Intelligent Explorer\n")
-st.write("Welcome to the VCF analysis tool")
+st.title("Genova\n")
+st.write("Welcome to the VCF analysis tool \n Version 1 : (AVIE) AML Variant Intelligent Explorer ")
 uploaded_file = st.file_uploader("Upload your VCF file here :", type=["VCF", "txt"])
 
 if uploaded_file is not None:
