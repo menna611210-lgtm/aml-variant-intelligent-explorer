@@ -29,5 +29,5 @@ https://github.com/user-attachments/assets/83d936b5-3bb1-47a1-b808-2bc82ec98b27
 - AML Gene Mapping .
 - Network Biology Analysis . 
 
-## AI Helped me in debugging an trying an css code for web formation 
+## AI Helped me in debugging an trying an css code for background formation 
 
