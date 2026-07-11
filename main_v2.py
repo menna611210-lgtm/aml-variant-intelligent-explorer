@@ -40,6 +40,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
+#|Version 1 : VCF Analysis|
+
 # ___________________________
 # Generating PDF File Report
 # ___________________________
@@ -297,3 +300,172 @@ if uploaded_file is not None:
         file_name="AVIE_Analysis_Report.pdf",
         mime="application/pdf"
     )
+#___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***
+
+# |Version 2 : Clinical Dataset Analysis|
+
+#__________________________________
+#Validating & Analyzing the dataset
+#__________________________________
+uploaded_dataset = st.file_uploader("Upload your dataset here :", type=["CSV", "txt"])
+df = pd.read_csv(uploaded_dataset)
+
+def validate_dataset(df):
+    required_columns = [
+        "AGE",
+        "SEX",
+        "RACE",
+        "FAB",
+        "WBC",
+        "BM_BLAST_PERCENTAGE",
+        "PB_BLAST_PERCENTAGE",
+        "CYTOGENETICS",
+        "RISK_CYTO",
+        "RISK_MOLECULAR",
+        "MUTATION_COUNT",
+        "FRACTION_GENOME_ALTERED",
+        "TMB_NONSYNONYMOUS",
+        "SUB_CLONES",
+        "OS_MONTHS",
+        "OS_STATUS",
+        "DFS_MONTHS",
+        "DFS_STATUS",
+        "TRANSPLANT_TYPE",
+        "INDUCTION"
+    ]
+
+
+
+
+
+
+
+
+
+
+#_________________
+#Dataset Overview :
+#_________________
+def dataset_overview(df):
+    patients = df.shape[0]
+    features = df.shape[1]
+    missing_values = df.isnull().sum()
+    return patients, features, missing_values
+
+#__________________________
+# Patient Characteristics :
+#__________________________
+def patient_characteristics(df):
+   age = df["AGE"]
+   min_age = age.min()
+   max_age = age.max()
+   avg_age = age.mean()
+
+   sex = df["SEX"]
+   sex_distribution = sex.value_counts()
+
+   race = df["RACE"]
+   race_distribution = race.value_counts()
+   return  min_age, max_age, avg_age, sex_distribution, race_distribution
+
+#_________________________
+#Disease Characteristics :
+#_________________________
+def disease_characteristics(df):
+    fab = df["FAB"]
+    fab_distribution = fab.value_counts()
+
+    wbc = df["WBC"]
+    min_wbc = wbc.min()
+    max_wbc = wbc.max()
+    avg_wbc = wbc.mean()
+
+    bm_blast_percentage = df["BM_BLAST_PERCENTAGE"]
+    min_bm_per = bm_blast_percentage.min()
+    max_bm_per = bm_blast_percentage.max()
+    avg_bm_per = bm_blast_percentage.mean()
+
+    pb_blast_percentage = df["PB_BLAST_PERCENTAGE"]
+    min_pb_per = pb_blast_percentage.min()
+    max_pb_per = pb_blast_percentage.max()
+    avg_pb_per = pb_blast_percentage.mean()
+    return min_wbc, max_wbc, avg_wbc, min_bm_per, max_bm_per, avg_bm_per ,  min_pb_per,  max_pb_per,  avg_pb_per
+#____________________
+#Risk Characteristics
+#____________________
+def risk_characteristics(df):
+    cytogenetics = df["CYTOGENETICS"]
+    cyto_distribution = cytogenetics.value_counts()
+
+    risk_cyto = df["RISK_CYTO"]
+    risk_cyto_distribution = risk_cyto.value_counts()
+
+    risk_molecular = df["RISK_MOLECULAR"]
+    risk_molecular_distribution = risk_molecular.value_counts()
+    return cyto_distribution,  risk_cyto_distribution,  risk_molecular_distribution
+
+#_________________________
+#Genomic characteristics :
+#_________________________
+def genomic_charachteristics(df):
+    mutation_count = df["MUTATION_COUNT"]
+    min_count = mutation_count.min()
+    max_count = mutation_count.max()
+    avg_count = mutation_count.mean()
+
+    frc_genome_alt = df["FRACTION_GENOME_ALTERED"]
+    min_frc = frc_genome_alt.min()
+    max_frc = frc_genome_alt.max()
+    avg_frc = frc_genome_alt.mean()
+
+    tmb = df["TMB_NONSYNONYMOUS"]
+    min_tmb = tmb.min()
+    max_tmb = tmb.max()
+    avg_tmb = tmb.mean()
+
+    sub_clones = df["SUB_CLONES"]
+    min_sub_clones = sub_clones.min()
+    max_sub_clones = sub_clones.max()
+    avg_sub_clones = sub_clones.mean()
+
+    return (min_count, max_count, avg_count, min_frc, max_frc, avg_frc, min_tmb, max_tmb, avg_tmb, min_sub_clones,
+            max_sub_clones, avg_sub_clones)
+
+#_________________
+#Clinical Outcome:
+#_________________
+def clinical_outcome(df):
+    os_months = df["OS_MONTHS"]
+    min_os_months = os_months.min()
+    max_os_months = os_months.max()
+    avg_os_months = os_months.mean()
+
+    os_status = df["OS_STATUS"]
+    os_status_distribution = os_status.value_counts()
+
+    dfs_months = df["DFS_MONTHS"]
+    min_dfs_months = dfs_months.min()
+    max_dfs_months = dfs_months.max()
+    avg_dfs_months = dfs_months.mean()
+
+    dfs_status = df["DFS_STATUS"]
+    dfs_status_distribution = dfs_status.value_counts()
+
+    transplant_type = df["TRANSPLANT_TYPE"]
+    transplant_distribution = transplant_type.value_counts()
+
+    induction = df["INDUCTION"]
+    induction_distribution = induction.value_counts()
+
+    return (min_os_months, max_os_months, avg_os_months, os_status_distribution, min_dfs_months,
+             max_dfs_months,avg_dfs_months, transplant_distribution,induction_distribution, dfs_status_distribution)
+
+
+
+
+
+
+
+
+
+
