@@ -221,8 +221,8 @@ def plot_chromosome_distribution(counts):
     plt.barh(counts.keys(), counts.values(), color="skyblue", edgecolor="black")
     plt.title("Chromosome Variant Distribution")
     plt.xlabel("Count")
-    plt.ylabel("Chromosome")
     plt.tight_layout()
+    plt.ylabel("Chromosome")
     plt.savefig("results/chromosome_distribution.png", dpi=300)
     plt.show()
 
@@ -303,58 +303,46 @@ if uploaded_file is not None:
 #___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***___***
 
 # |Version 2 : Clinical Dataset Analysis|
-
 #__________________________________
 #Validating & Analyzing the dataset
 #__________________________________
-uploaded_dataset = st.file_uploader("Upload your dataset here :", type=["CSV", "txt"])
-df = pd.read_csv(uploaded_dataset)
 
 def validate_dataset(df):
-    required_columns = [
-        "AGE",
-        "SEX",
-        "RACE",
-        "FAB",
-        "WBC",
-        "BM_BLAST_PERCENTAGE",
-        "PB_BLAST_PERCENTAGE",
-        "CYTOGENETICS",
-        "RISK_CYTO",
-        "RISK_MOLECULAR",
-        "MUTATION_COUNT",
-        "FRACTION_GENOME_ALTERED",
-        "TMB_NONSYNONYMOUS",
-        "SUB_CLONES",
-        "OS_MONTHS",
-        "OS_STATUS",
-        "DFS_MONTHS",
-        "DFS_STATUS",
-        "TRANSPLANT_TYPE",
-        "INDUCTION"
-    ]
+        required_columns = ["AGE",
+                            "SEX",
+                            "RACE",
+                            "FAB", "WBC",
+                            "BM_BLAST_PERCENTAGE",
+                            "PB_BLAST_PERCENTAGE",
+                            "CYTOGENETICS",
+                            "RISK_CYTO",
+                            "RISK_MOLECULAR",
+                            "MUTATION_COUNT",
+                            "FRACTION_GENOME_ALTERED",
+                            "TMB_NONSYNONYMOUS",
+                            "SUB_CLONES",
+                            "OS_MONTHS",
+                            "OS_STATUS",
+                            "DFS_MONTHS",
+                            "DFS_STATUS",
+                            "TRANSPLANT_TYPE",
+                            "INDUCTION"]
+        missing_columns = []
+        for column in required_columns:
+          if column not in uploaded_columns:
+            missing_columns.append(column)
+        return  missing_columns
+        missing_columns = validate_dataset(df)
 
 
 
-
-
-
-
-
-
-
-#_________________
-#Dataset Overview :
-#_________________
 def dataset_overview(df):
     patients = df.shape[0]
     features = df.shape[1]
     missing_values = df.isnull().sum()
     return patients, features, missing_values
 
-#__________________________
-# Patient Characteristics :
-#__________________________
+
 def patient_characteristics(df):
    age = df["AGE"]
    min_age = age.min()
@@ -368,9 +356,8 @@ def patient_characteristics(df):
    race_distribution = race.value_counts()
    return  min_age, max_age, avg_age, sex_distribution, race_distribution
 
-#_________________________
-#Disease Characteristics :
-#_________________________
+
+
 def disease_characteristics(df):
     fab = df["FAB"]
     fab_distribution = fab.value_counts()
@@ -389,10 +376,10 @@ def disease_characteristics(df):
     min_pb_per = pb_blast_percentage.min()
     max_pb_per = pb_blast_percentage.max()
     avg_pb_per = pb_blast_percentage.mean()
-    return min_wbc, max_wbc, avg_wbc, min_bm_per, max_bm_per, avg_bm_per ,  min_pb_per,  max_pb_per,  avg_pb_per
-#____________________
-#Risk Characteristics
-#____________________
+    return  fab_distribution, min_wbc, max_wbc, avg_wbc, min_bm_per, max_bm_per, avg_bm_per ,  min_pb_per,  max_pb_per,  avg_pb_per
+
+
+
 def risk_characteristics(df):
     cytogenetics = df["CYTOGENETICS"]
     cyto_distribution = cytogenetics.value_counts()
@@ -404,10 +391,9 @@ def risk_characteristics(df):
     risk_molecular_distribution = risk_molecular.value_counts()
     return cyto_distribution,  risk_cyto_distribution,  risk_molecular_distribution
 
-#_________________________
-#Genomic characteristics :
-#_________________________
-def genomic_charachteristics(df):
+
+
+def genomic_characteristics(df):
     mutation_count = df["MUTATION_COUNT"]
     min_count = mutation_count.min()
     max_count = mutation_count.max()
@@ -431,9 +417,8 @@ def genomic_charachteristics(df):
     return (min_count, max_count, avg_count, min_frc, max_frc, avg_frc, min_tmb, max_tmb, avg_tmb, min_sub_clones,
             max_sub_clones, avg_sub_clones)
 
-#_________________
-#Clinical Outcome:
-#_________________
+
+
 def clinical_outcome(df):
     os_months = df["OS_MONTHS"]
     min_os_months = os_months.min()
@@ -461,8 +446,19 @@ def clinical_outcome(df):
              max_dfs_months,avg_dfs_months, transplant_distribution,induction_distribution, dfs_status_distribution)
 
 
+#________________________________________________________________________________________________________________________
+
+uploaded_dataset = st.file_uploader("Upload your dataset here :",  type=["csv", "txt"])
 
 
+if uploaded_dataset is not None:
+    df = pd.read_csv(uploaded_dataset , sep="\t")
+    uploaded_columns = df.columns.tolist()
+    validate_dataset(df)
+    if len(missing_columns) > 0:
+        st.warning(f"The following columns are missing from the dataset: \n {missing_columns}")
+    else:
+        st.success("✅ Dataset Validation Passed \n All required columns are available.")
 
 
 
