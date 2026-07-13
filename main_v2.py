@@ -448,7 +448,7 @@ def clinical_outcome(df):
 
 #________________________________________________________________________________________________________________________
 
-uploaded_dataset = st.file_uploader("Upload your dataset here :",  type=["csv", "txt" , "tsv"])
+uploaded_dataset = st.file_uploader("Upload your dataset here :",  type=["tsv"])
 
 
 if uploaded_dataset is not None:
