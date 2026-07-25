@@ -39,6 +39,17 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+st.markdown("""
+<style>
+[data-testid="stSidebar"] {
+    background-color: #1E293B;
+}
+
+[data-testid="stSidebar"] * {
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 #|Version 1 : VCF Analysis|
@@ -327,12 +338,14 @@ def validate_dataset(df):
                             "DFS_STATUS",
                             "TRANSPLANT_TYPE",
                             "INDUCTION"]
+        uploaded_columns = df.columns.tolist()
         missing_columns = []
+
         for column in required_columns:
           if column not in uploaded_columns:
             missing_columns.append(column)
-        return  missing_columns
-        missing_columns = validate_dataset(df)
+        return missing_columns
+
 
 
 
@@ -376,7 +389,8 @@ def disease_characteristics(df):
     min_pb_per = pb_blast_percentage.min()
     max_pb_per = pb_blast_percentage.max()
     avg_pb_per = pb_blast_percentage.mean()
-    return  fab_distribution, min_wbc, max_wbc, avg_wbc, min_bm_per, max_bm_per, avg_bm_per ,  min_pb_per,  max_pb_per,  avg_pb_per
+    return  (fab_distribution, min_wbc, max_wbc, avg_wbc, min_bm_per, max_bm_per, avg_bm_per ,
+    min_pb_per,  max_pb_per,  avg_pb_per)
 
 
 
@@ -409,13 +423,11 @@ def genomic_characteristics(df):
     max_tmb = tmb.max()
     avg_tmb = tmb.mean()
 
-    sub_clones = df["SUB_CLONES"]
-    min_sub_clones = sub_clones.min()
-    max_sub_clones = sub_clones.max()
-    avg_sub_clones = sub_clones.mean()
 
-    return (min_count, max_count, avg_count, min_frc, max_frc, avg_frc, min_tmb, max_tmb, avg_tmb, min_sub_clones,
-            max_sub_clones, avg_sub_clones)
+    sub_clones = df["SUB_CLONES"]
+    sub_clones_distribution = sub_clones.value_counts()
+
+    return (min_count, max_count, avg_count, min_frc, max_frc, avg_frc, min_tmb, max_tmb, avg_tmb, sub_clones_distribution)
 
 
 
@@ -448,17 +460,148 @@ def clinical_outcome(df):
 
 #________________________________________________________________________________________________________________________
 
-uploaded_dataset = st.file_uploader("Upload your dataset here :",  type=["tsv"])
-
+uploaded_dataset = st.file_uploader("Upload your dataset here :",  type=["csv", "txt" , "tsv"])
 
 if uploaded_dataset is not None:
     df = pd.read_csv(uploaded_dataset , sep="\t")
-    uploaded_columns = df.columns.tolist()
-    validate_dataset(df)
-    if len(missing_columns) > 0:
-        st.warning(f"The following columns are missing from the dataset: \n {missing_columns}")
-    else:
-        st.success("✅ Dataset Validation Passed \n All required columns are available.")
+    missing_columns = validate_dataset(df)
+    if len(missing_columns) > 0 :
+        st.warning(f"Missing Columns : {missing_columns}")
+    else :
+        st.success("✅ Dataset Validation Passed All required colums are available.")
+
+        section = st.sidebar.radio(
+            "Navigate to",
+            [
+                "Dataset Overview",
+                "Patient Characteristics",
+                "Disease Characteristics",
+                "Risk Characteristics",
+                "Genomic Characteristics",
+                "Clinical Outcome",
+            ]
+        )
+        if section == "Dataset Overview":
+            patients, features, missing_values = dataset_overview(df)
+            st.header("📊 Dataset Overview")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("patients", patients)
+            with col2:
+                st.metric("features", features)
+            with col3:
+                st.metric("missing_values", missing_values.sum())
+
+        elif section == "Patient Characteristics":
+            min_age, max_age, avg_age, sex_distribution, race_distribution = patient_characteristics(df)
+            st.header("Patient Characteristics")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum age", min_age)
+            with col2:
+                st.metric("maximum age", max_age)
+            with col3:
+                st.metric("average age", avg_age)
+            st.subheader("Sex distribution")
+            st.bar_chart(sex_distribution)
+            st.subheader("Race distribution")
+            st.bar_chart(race_distribution)
+
+        elif section == "Disease Characteristics":
+            fab_distribution, min_wbc, max_wbc, avg_wbc, min_bm_per, max_bm_per, avg_bm_per, min_pb_per, max_pb_per, avg_pb_per = disease_characteristics(
+                df)
+            st.header("📊 Disease Characteristics")
+            st.subheader("FAB distribution")
+            st.bar_chart(fab_distribution)
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum wbc", min_wbc)
+            with col2:
+                st.metric("maximum wbc", max_wbc)
+            with col3:
+                st.metric("average wbc", avg_wbc)
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum bm percentage", min_bm_per)
+            with col2:
+                st.metric("maximum bm percentage", max_bm_per)
+            with col3:
+                st.metric("average bm percentage", avg_bm_per)
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum pb percentage", min_pb_per)
+            with col2:
+                st.metric("maximum pb percentage", max_pb_per)
+            with col3:
+                st.metric("average pb percentage", avg_pb_per)
+
+        elif section == "Risk Characteristics":
+            cyto_distribution, risk_cyto_distribution, risk_molecular_distribution = risk_characteristics(df)
+            st.header("Risk characteristics")
+            st.subheader("Cytogenetics distribution")
+            st.bar_chart(cyto_distribution)
+            st.subheader("Risk cyto distribution")
+            st.bar_chart(risk_cyto_distribution)
+            st.subheader("Risk molecular distribution")
+            st.bar_chart(risk_molecular_distribution)
+
+        elif section == "Genomic Characteristics":
+            min_count, max_count, avg_count, min_frc, max_frc, avg_frc, min_tmb, max_tmb, avg_tmb, sub_clones_distribution = genomic_characteristics(
+                df)
+            st.header("Genomic characteristics")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum count", min_count)
+            with col2:
+                st.metric("maximum count", max_count)
+            with col3:
+                st.metric("average count", avg_count)
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum fraction altered count", min_frc)
+            with col2:
+                st.metric("maximum fraction", max_frc)
+            with col3:
+                st.metric("average fraction", avg_frc)
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum tmb", min_tmb)
+            with col2:
+                st.metric("maximum tmb", max_tmb)
+            with col3:
+                st.metric("average tmb", avg_tmb)
+            col1, col2, col3 = st.columns(3)
+            st.subheader("sub clones distribution")
+            st.bar_chart(sub_clones_distribution)
+
+        elif section == "Clinical Outcome":
+
+            min_os_months, max_os_months, avg_os_months, os_status_distribution, min_dfs_months, max_dfs_months, avg_dfs_months, transplant_distribution, induction_distribution, dfs_status_distribution = clinical_outcome(
+                df)
+            st.header("Clinical Outcome")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum OS months", min_os_months)
+            with col2:
+                st.metric("maximum OS months", max_os_months)
+            with col3:
+                st.metric("average OS months", avg_os_months)
+            st.subheader("OS status distribution")
+            st.bar_chart(os_status_distribution)
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("minimum DFS months", min_dfs_months)
+            with col2:
+                st.metric("maximum DFS months", max_dfs_months)
+            with col3:
+                st.metric("average DFS months", avg_dfs_months)
+            st.subheader("DFS status distribution")
+            st.bar_chart(dfs_status_distribution)
+            st.subheader("Transplant distribution")
+            st.bar_chart(transplant_distribution)
+            st.subheader("Induction distribution")
+            st.bar_chart(induction_distribution)
+
 
 
 
