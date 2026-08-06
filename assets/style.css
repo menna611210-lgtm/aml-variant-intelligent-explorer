@@ -1,17 +1,111 @@
 body{
-    background-color : #F8FAFC
+    background-color : #F4FBFF;
 }
 
-[data_testid = "stAppViewContainer"]{
-    background-color: #F8FAFC;
+[data-testid="stAppViewContainer"]{
+    background-color: #F4FBFF;
 }
 
 /*=====================
 Hero Section
  ======================*/
 .hero-card{
-    color: #ffffff;
+    background-color: #ffffff;
     border-radius : 20px;
     padding: 40px;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    max-width: 800px;
+    margin: 80px auto;
+    text-align : center;
 }
+
+.hero-card h1{
+    font-family: Inter;
+    color :  #2563EB;
+    font-size: 56px ;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.hero-card h2{
+    color : #374151;;
+    font-size: 32px;
+    font-weight: 400;
+    font-family: Inter;
+    margin-bottom : 20px;
+}
+
+.hero-card p{
+    color : #6B7280;
+    font-family: Inter;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.7;
+}
+
+/*================
+Action Section
+ =================*/
+.action-container{
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.action-card {
+
+    background-color: navy;
+    color: white;
+    border-radius: 24px;
+    padding: 12px;
+    margin-top: 24px;
+    width: 320px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    transition: 0.3s;
+}
+
+
+.action-card h3{
+    font-family: Inter;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.action-card p{
+    font-family: Inter;
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Typography Scale */
+/*
+
+64px → Hero Title
+
+32px → Hero Subtitle
+
+20px → Card Title
+
+16px → Body Text
+
+14px → Small Text
+
+*/
