@@ -1,9 +1,10 @@
 import streamlit as st
 
+
 def show():
     hero_section()
     action_section()
-    features_section()
+    workflow_section()
     footer_section()
 
 
@@ -18,6 +19,7 @@ def hero_section():
     </P>
     </div>   
     ''', unsafe_allow_html=True)
+
 
 def action_section():
     st.markdown('''
@@ -38,15 +40,43 @@ def action_section():
            <p>Explore Genova using a sample dataset.</p>
       </div>
     </div>
-    ''', unsafe_allow_html=True  )
-    pass
-
-def features_section():
+    ''', unsafe_allow_html=True)
     pass
 
 
+def workflow_section():
+    st.markdown(
+        "<h2 class='workflow-title'>How Genova Works</h2>",
+        unsafe_allow_html=True
+    )
 
+    col1, col2, col3 = st.columns(3)
 
+    with col1:
+        st.markdown("""
+          <div class="workflow-card">
+              <div class="circle">1</div>
+              <h3>Upload Dataset</h3>
+              <p>Upload your genomic dataset or a VCF file.</p>
+          </div>
+          """, unsafe_allow_html=True)
 
+    with col2:
+        st.markdown("""
+          <div class="workflow-card">
+              <div class="circle">2</div>
+              <h3>Analyze</h3>
+              <p>Genova validates and processes your data.</p>
+          </div>
+          """, unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("""
+          <div class="workflow-card">
+              <div class="circle">3</div>
+              <h3>Visualize Results</h3>
+              <p>Explore clear interactive genomic insights.</p>
+          </div>
+          """, unsafe_allow_html=True)
 def footer_section():
     pass

@@ -3,8 +3,8 @@ import os
 
 def load_css():
     css_path = os.path.join(
-        os.path.dirname(__file__),   # components
-        "..",                        # يرجع لمجلد المشروع
+        os.path.dirname(__file__),
+        "..",
         "assets",
         "style.css"
     )

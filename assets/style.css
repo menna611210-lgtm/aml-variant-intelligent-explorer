@@ -51,6 +51,7 @@ Action Section
     justify-content: center;
     gap: 30px;
     flex-wrap: wrap;
+     margin-bottom:100px;
 }
 
 .action-card {
@@ -80,13 +81,58 @@ Action Section
     line-height: 1.5;
 }
 
+/*========================
+Workflow Section
+=========================*/
 
+.workflow-title{
+    margin-top:100px;
+    margin-bottom:60px;
+    text-align:center;
+    color:#2563EB;
+    font-size:34px;
+    font-weight:700;
+    font-family: Inter;
+}
 
+.workflow-card{
+    text-align:center;
+    padding:15px;
+}
 
+.circle{
+    width:60px;
+    height:60px;
+    margin:auto;
+    margin-bottom:18px;
+    border-radius:50%;
+    background:#2563EB;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:24px;
+    font-weight:700;
+    font-family: Inter;
+    box-shadow:0 6px 15px rgba(37,99,235,.20);
+}
 
+.workflow-card h3{
+    margin-bottom:10px;
+    font-size:24px;
+    font-family: Inter;
+    color:#1F2937;
+    font-weight:650;
+}
 
-
-
+.workflow-card p{
+    max-width:220px;
+    margin:auto;
+    color:#6B7280;
+    font-size:16px;
+    font-family: Inter;
+    line-height:1.6;
+}
 
 
 
